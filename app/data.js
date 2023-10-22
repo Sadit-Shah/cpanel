@@ -1,4 +1,12 @@
 import React from "react";
+const columnsnew = [
+  {name: "_ID", uid: "_id", sortable: true},
+  {name: "PACKAGE_NAME", uid: "package_name", sortable: true},
+  {name: "CITIES", uid: "cities", sortable: true},
+  {name: "PACKAGE_DURATION", uid: "package_duration", sortable: true},
+  {name: "ACTIONS", uid: "actions"},
+];
+
 const columns = [
   {name: "ID", uid: "id", sortable: true},
   {name: "NAME", uid: "name", sortable: true},
@@ -219,4 +227,7 @@ const users = [
   },
 ];
 
-export {columns, users, statusOptions};
+const allpackages = [{"_id":"6526d4835eaa1b7f87a23f8e","package_name":"Exotic Kashmir - 04 Nights & 05 Days Kashmir Package","cities":"Srinagar, Pahalgam, Sonmarg, Gulmarg","package_duration":"04 Nights 05 Days"},{"_id":"6526eebf5eaa1b7f87a23f8f","package_name":"Winter Special Tours - 05 Nights & 06 Days Kashmir Package","cities":"Srinagar, Mughal Gardens, Sonmarg, Pahalgam, Gulmarg, Srinagar","package_duration":"05 Nights 06 Days"},{"_id":"652a4ffa48bcb1233b50fbce","package_name":"Fusion Tours - 03 Nights & 04 Days Kashmir Package","cities":"Srinagar, Pahalgam, Gulmarg, Srinagar","package_duration":"03 Nights 04 Days"},{"_id":"6534dbdccfb8172638df2fa7","package_name":"Honeymoon Special- 05 Nights & 06 Days Kashmir Package","cities":"Srinagar, Dal Lake, Sonmarg, Pahalgam, Gulmarg, Srinagar","package_duration":"05 Nights 06 Days"},{"_id":"6534e274cfb8172638df2fa8","package_name":"Family Tours - 05 Nights & 06 Days Kashmir Package","cities":"Srinagar, Dal Lake, Sonmarg, Gulmarg , Pahalgam, Srinagar","package_duration":"05 Nights 06 Days"},{"_id":"6534f28ced8547f21b9b95a2","package_name":"Fusion Tour - 05 Nights & 06 Days Kashmir Package (Gurez Valley)","cities":"Srinagar, Gurez, Tulail, Srinagar","package_duration":"05 Nights 06 Days"}]
+
+
+export {columns, columnsnew, users, statusOptions, allpackages};
