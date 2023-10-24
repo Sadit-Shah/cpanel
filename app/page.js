@@ -1,5 +1,6 @@
 'use client'
-import React from "react";
+import React, {useEffect} from "react";
+
 import {
   Table,
   TableHeader,
@@ -21,7 +22,7 @@ import {PlusIcon} from "./PlusIcon";
 import {VerticalDotsIcon} from "./VerticalDotsIcon";
 import {SearchIcon} from "./SearchIcon";
 import {ChevronDownIcon} from "./ChevronDownIcon";
-import {columns, users, statusOptions} from "./data";
+import {columnsnew, users, statusOptions} from "./data";
 import {capitalize} from "./utils";
 
 const statusColorMap = {
@@ -30,18 +31,29 @@ const statusColorMap = {
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["package_name", "cities", "package_duration", "actions"];
+
 
 export default function App() {
+  const [allpackages, setPackages] = React.useState([]);
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
-  const [statusFilter, setStatusFilter] = React.useState("all");
+  // const [statusFilter, setStatusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
     column: "age",
     direction: "ascending",
   });
+
+  useEffect(() => {
+    fetch('https://openskytrip.vercel.app/api/packageDetails')
+      .then((res) => res.json())
+      .then((data) => {
+        setPackages(data)
+      })
+  }, [])
+console.log(allpackages)
   const [page, setPage] = React.useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
@@ -49,34 +61,38 @@ export default function App() {
   const headerColumns = React.useMemo(() => {
     if (visibleColumns === "all") return columns;
 
-    return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
+    return columnsnew.filter((column) => Array.from(visibleColumns).includes(column.uid));
   }, [visibleColumns]);
 
-  const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+  const filteredPackages = React.useMemo(() => {
+    let filteredPackages = [...allpackages];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase()),
+      filteredPackages = filteredPackages.filter((pkgname) =>
+        pkgname.package_name.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
-    if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status),
-      );
-    }
+    // if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
+    //   filteredPackages = filteredPackages.filter((pkgname) =>
+    //     Array.from(statusFilter).includes(pkgname.package_name),
+    //   );
+    // }
 
-    return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+    return filteredPackages;
+  }, [users, filterValue]);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+  // console.log(packages)
+  const packages=[...allpackages]
+  const pages = Math.ceil(packages.length / rowsPerPage);
+  // const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
+    // return filteredItems.slice(start, end);
+    return packages.slice(start, end);
+  }, [page, packages, rowsPerPage]);
 
   const sortedItems = React.useMemo(() => {
     return [...items].sort((a, b) => {
@@ -88,33 +104,22 @@ export default function App() {
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((user, columnKey) => {
-    const cellValue = user[columnKey];
+  const renderCell = React.useCallback((packages, columnKey) => {
+    const cellValue = packages[columnKey];
 
     switch (columnKey) {
-      case "name":
-        return (
-          <User
-            avatarProps={{radius: "lg", src: user.avatar}}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
-        );
-      case "role":
+      case "package_name":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-400">{user.team}</p>
           </div>
         );
-      case "status":
-        return (
-          <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-            {cellValue}
-          </Chip>
-        );
+      // case "status":
+      //   return (
+      //     <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
+      //       {cellValue}
+      //     </Chip>
+      //   );
       case "actions":
         return (
           <div className="relative flex justify-end items-center gap-2">
@@ -182,13 +187,13 @@ export default function App() {
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3">
-            <Dropdown>
+            {/* <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
                   Status
                 </Button>
               </DropdownTrigger>
-              <DropdownMenu
+              {/* <DropdownMenu
                 disallowEmptySelection
                 aria-label="Table Columns"
                 closeOnSelect={false}
@@ -201,8 +206,8 @@ export default function App() {
                     {capitalize(status.name)}
                   </DropdownItem>
                 ))}
-              </DropdownMenu>
-            </Dropdown>
+              </DropdownMenu> 
+            </Dropdown> */}
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
@@ -217,7 +222,7 @@ export default function App() {
                 selectionMode="multiple"
                 onSelectionChange={setVisibleColumns}
               >
-                {columns.map((column) => (
+                {columnsnew.map((column) => (
                   <DropdownItem key={column.uid} className="capitalize">
                     {capitalize(column.name)}
                   </DropdownItem>
@@ -230,7 +235,7 @@ export default function App() {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users.length} users</span>
+          <span className="text-default-400 text-small">Total {allpackages.length} Packages</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -247,10 +252,10 @@ export default function App() {
     );
   }, [
     filterValue,
-    statusFilter,
+    // statusFilter,
     visibleColumns,
     onRowsPerPageChange,
-    users.length,
+    // users.length,
     onSearchChange,
     hasSearchFilter,
   ]);
@@ -261,7 +266,7 @@ export default function App() {
         <span className="w-[30%] text-small text-default-400">
           {selectedKeys === "all"
             ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
+            : `${selectedKeys.size} of ${packages.length} selected`}
         </span>
         <Pagination
           isCompact
@@ -286,7 +291,7 @@ export default function App() {
 
   return (
    
-    <div className="flex items-center justify-center max-w-[900px] mx-auto pt-12">
+    <div className="flex justify-center w-full mx-auto p-10 min-h-[100vh]">
     <Table
       aria-label="Example table with custom cells, pagination and sorting"
       isHeaderSticky
@@ -296,8 +301,8 @@ export default function App() {
         wrapper: "max-h-[400px]",
       }}
       selectedKeys={selectedKeys}
-      selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
+      // selectionMode="multiple"
+      // sortDescriptor={sortDescriptor}
       topContent={topContent}
       topContentPlacement="outside"
       onSelectionChange={setSelectedKeys}
@@ -314,9 +319,9 @@ export default function App() {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
+      <TableBody emptyContent={"No package found"} items={sortedItems}>
         {(item) => (
-          <TableRow key={item.id}>
+          <TableRow key={item._id}>
             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
           </TableRow>
         )}

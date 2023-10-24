@@ -22,7 +22,7 @@ import {PlusIcon} from "../PlusIcon";
 import {VerticalDotsIcon} from "../VerticalDotsIcon";
 import {SearchIcon} from "../SearchIcon";
 import {ChevronDownIcon} from "../ChevronDownIcon";
-import {columnsnew, users, statusOptions, allpackages} from "../data";
+import {columnsnew, users, statusOptions} from "../data";
 import {capitalize} from "../utils";
 
 const statusColorMap = {
@@ -35,7 +35,7 @@ const INITIAL_VISIBLE_COLUMNS = ["package_name", "cities", "package_duration", "
 
 
 export default function App() {
-  // const [packages, setPackages] = React.useState([]);
+  const [allpackages, setPackages] = React.useState([]);
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -46,15 +46,14 @@ export default function App() {
     direction: "ascending",
   });
 
-  // useEffect(() => {
-  //   fetch('https://openskytrip.vercel.app/api/packageDetails')
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       console.log(data)
-  //       setPackages(data)
-  //     })
-  // }, [])
-
+  useEffect(() => {
+    fetch('https://openskytrip.vercel.app/api/packageDetails')
+      .then((res) => res.json())
+      .then((data) => {
+        setPackages(data)
+      })
+  }, [])
+console.log(allpackages)
   const [page, setPage] = React.useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
@@ -256,7 +255,7 @@ export default function App() {
     // statusFilter,
     visibleColumns,
     onRowsPerPageChange,
-    users.length,
+    // users.length,
     onSearchChange,
     hasSearchFilter,
   ]);
@@ -303,7 +302,7 @@ export default function App() {
       }}
       selectedKeys={selectedKeys}
       // selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
+      // sortDescriptor={sortDescriptor}
       topContent={topContent}
       topContentPlacement="outside"
       onSelectionChange={setSelectedKeys}

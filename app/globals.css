@@ -6,8 +6,13 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  
 }
-
+:root[data-theme='dark'] {
+  --nextui-content1: bg-slate-800;
+  --foreground-rgb: 255, 255, 255;
+  --nextui-foreground-500: 255, 255, 255;
+}
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
@@ -18,5 +23,5 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: #fff;
+  background: #d6d6d6;
 }
